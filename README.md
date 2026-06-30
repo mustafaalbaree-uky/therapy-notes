@@ -99,13 +99,16 @@ Then open the printed URL. Build with `npm run build`, preview with
 ## Deploying to GitHub Pages
 
 A workflow at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-builds and deploys on every push to `main`.
+builds and deploys on every push to `main`. It calls `actions/configure-pages`
+with `enablement: true`, so it turns Pages on (source = GitHub Actions) by
+itself — no manual repo setting needed. The app publishes at
+`https://<you>.github.io/therapy-notes/`.
 
-1. In the repo: **Settings → Pages → Build and deployment → Source = GitHub Actions**.
-2. (Optional) Add repo **Variables** `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`
-   to bake config in. Otherwise use the in-app setup screen.
-3. Push to `main`. The app publishes at
-   `https://<you>.github.io/therapy-notes/`.
+The Supabase URL + anon key for the provisioned `therapy-notes` project are
+baked into [`src/lib/config.ts`](src/lib/config.ts) (both are public-safe), so
+the deployed site works with no setup screen. To point at a different project,
+set repo **Variables** `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`, which
+override the baked defaults.
 
 `vite.config.ts` sets `base` to `/therapy-notes/` and the app uses hash-based
 routing, so refreshing a deep link won't 404 on Pages. If you rename the repo,
