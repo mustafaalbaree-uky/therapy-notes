@@ -61,6 +61,9 @@ export function SessionDetailPage() {
       .then((s) => {
         setSession(s)
         setDraft(toDraft(s))
+        // Sessions that arrive already speaker-labeled (e.g. from the
+        // Gemini audio shortcut) should open showing that labeled view.
+        if (s.transcript_labeled) setShowLabeled(true)
       })
       .catch((e) => setLoadErr((e as Error).message))
   }, [id])
