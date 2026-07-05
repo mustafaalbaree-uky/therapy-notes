@@ -169,7 +169,10 @@
       color: var(--text);
       border-radius: 9px;
       padding: 8px 10px;
-      font-size: 0.95rem;
+      /* iOS Safari zooms the page on focus if a field's font-size is under
+         16px — keep this at 16px exactly to stop that, then compensate
+         visually with tighter padding/width. */
+      font-size: 16px;
       width: 110px;
     }
     .row input[type="text"].wide { flex: 1 1 200px; width: auto; }
@@ -257,7 +260,7 @@
       <p class="hint">Install the free <b>Bark</b> app on your iPhone, copy your key from its home screen (the code in <code>https://api.day.app/YOURKEY/</code>), paste it below, then hit “Test”. To make the automatic background notifications work, also paste the key into the GitHub config (buttons below).</p>
       <div class="row"><label>Bark key</label><input type="text" class="wide" id="s_barkKey" placeholder="e.g. AbCdEfGh123" /></div>
       <div class="row"><label>Bark server</label><input type="text" class="wide" id="s_barkServer" /></div>
-      <div class="row"><label>Sound</label><input type="text" id="s_barkSound" /></div>
+      <div class="row"><label>Sound</label><select id="s_barkSound"></select></div>
       <div class="row"><label>Time-sensitive (breaks through Focus)</label><input type="checkbox" id="s_timeSensitive" /></div>
       <div class="row"><label>“Adhan in X min” alert</label><input type="checkbox" id="s_nBeforeAdhan" /><input type="number" id="s_nBeforeAdhanMin" title="minutes before adhan" /></div>
       <div class="row"><label>Alert at adhan time</label><input type="checkbox" id="s_nAtAdhan" /></div>

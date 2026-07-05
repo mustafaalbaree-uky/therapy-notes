@@ -9,6 +9,17 @@ const NAMES = {
   isha: { ar: "العشاء", en: "Isha" },
 };
 const ADHAN_PRAYERS = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
+
+// Bark's built-in alert tones (iOS system "New" sounds) — the full set the
+// Bark server accepts for its `sound` query param.
+const BARK_SOUNDS = [
+  "alarm", "anticipate", "bell", "birdsong", "bloom", "calypso", "chime",
+  "choo", "descent", "electronic", "fanfare", "glass", "gotosleep",
+  "healthnotification", "horn", "ladder", "mailsent", "minuet",
+  "multiwayinvitation", "newmail", "newsflash", "noir", "paymentsuccess",
+  "shake", "sherwoodforest", "silence", "spell", "suspense", "telegraph",
+  "tiptoes", "typewriters", "update",
+];
 const STORAGE_KEY = "prayer-settings-v1";
 const GH_EDIT_URL =
   "https://github.com/mustafaalbaree-uky/therapy-notes/edit/main/public/prayer/config.json";
@@ -216,6 +227,9 @@ function buildAdjustRows() {
   $("prayerToggles").innerHTML = ADHAN_PRAYERS.map(
     (p) =>
       `<label style="display:flex;align-items:center;gap:5px;font-size:.85rem"><input type="checkbox" id="np_${p}" />${NAMES[p].en}</label>`
+  ).join("");
+  $("s_barkSound").innerHTML = BARK_SOUNDS.map(
+    (s) => `<option value="${s}">${s}</option>`
   ).join("");
 }
 
