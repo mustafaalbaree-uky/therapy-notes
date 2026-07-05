@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0b0d12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>مواقيت الصلاة · Prayer Times</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%95%8C%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: #12151d;
+      --panel-2: #171b25;
+      --line: #262c3a;
+      --gold: #d4af37;
+      --gold-soft: #b9973a;
+      --text: #f2ede1;
+      --muted: #8d93a3;
+      --active-glow: 0 0 40px rgba(212, 175, 55, 0.14);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #1a2030 0%, transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100dvh;
+      padding: max(env(safe-area-inset-top), 14px) 16px calc(env(safe-area-inset-bottom) + 24px);
+    }
+    .ar { font-family: "Amiri", "Geeza Pro", "Traditional Arabic", serif; }
+
+    header {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 2px 0;
+    }
+    header .brand { display: flex; flex-direction: column; gap: 1px; }
+    header .brand .title { font-size: 1.35rem; color: var(--gold); letter-spacing: 0.5px; }
+    header .brand .loc { font-size: 0.85rem; color: var(--muted); letter-spacing: 1px; }
+    #gearBtn {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    #gearBtn:hover { color: var(--gold); border-color: var(--gold-soft); }
+
+    .clockline {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    #nowTime { font-size: 1.5rem; letter-spacing: 2px; color: var(--text); font-variant-numeric: tabular-nums; }
+    #dateLine { font-size: 0.95rem; color: var(--muted); }
+    #hijriLine { font-size: 1.05rem; color: var(--gold-soft); }
+
+    .hero {
+      width: 100%;
+      max-width: 560px;
+      margin-top: 18px;
+      background: linear-gradient(180deg, var(--panel-2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 26px 20px 22px;
+      text-align: center;
+      box-shadow: var(--active-glow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before, .hero::after {
+      content: "۞";
+      position: absolute;
+      color: rgba(212,175,55,.18);
+      font-size: 1.4rem;
+      top: 12px;
+    }
+    .hero::before { left: 16px; }
+    .hero::after { right: 16px; }
+    #heroKicker { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    #heroPrayerAr { font-size: 3rem; line-height: 1.25; color: var(--gold); margin-top: 4px; }
+    #heroPrayerEn { font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-top: -4px; }
+    #heroCountdown {
+      font-size: clamp(3.2rem, 16vw, 4.6rem);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      margin-top: 10px;
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(212,175,55,.25);
+    }
+    #heroSub { margin-top: 12px; font-size: 1.05rem; color: var(--muted); }
+    #heroSub b { color: var(--text); font-weight: 600; }
+    .progress {
+      margin: 18px auto 0;
+      width: 82%;
+      height: 3px;
+      background: var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); transition: width 1s linear; }
+
+    .grid {
+      width: 100%;
+      max-width: 560px;
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .cell {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 8px 10px;
+      text-align: center;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .cell.active { border-color: var(--gold-soft); box-shadow: var(--active-glow); }
+    .cell.past { opacity: 0.55; }
+    .cell .nameAr { font-size: 1.35rem; color: var(--gold); line-height: 1.4; }
+    .cell .nameEn { font-size: 0.65rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
+    .cell .adhan { font-size: 1.35rem; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .cell .iqama { font-size: 0.78rem; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .cell .iqama span { color: var(--gold-soft); }
+
+    footer { margin-top: 18px; font-size: 0.8rem; color: var(--muted); text-align: center; max-width: 560px; }
+    footer a { color: var(--gold-soft); text-decoration: none; }
+
+    /* ---------- Settings ---------- */
+    dialog {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      color: var(--text);
+      width: min(560px, calc(100vw - 24px));
+      max-height: 86dvh;
+      padding: 0;
+    }
+    dialog::backdrop { background: rgba(0,0,0,.6); backdrop-filter: blur(4px); }
+    .sheet { padding: 20px 18px 26px; overflow-y: auto; max-height: 86dvh; font-family: system-ui, -apple-system, sans-serif; }
+    .sheet h2 { font-family: "Cormorant Garamond", serif; color: var(--gold); font-size: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .sheet h3 { margin: 22px 0 8px; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+    .sheet p.hint { font-size: 0.8rem; color: var(--muted); line-height: 1.45; margin: 6px 0 10px; }
+    .row { display: flex; gap: 8px; align-items: center; margin: 7px 0; flex-wrap: wrap; }
+    .row label { flex: 1 1 130px; font-size: 0.9rem; }
+    .row input[type="number"], .row input[type="text"], .row select {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      width: 110px;
+    }
+    .row input[type="text"].wide { flex: 1 1 200px; width: auto; }
+    .row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--gold); }
+    .btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .btns button, .btns a {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btns .primary { background: var(--gold); border-color: var(--gold); color: #14110a; font-weight: 600; }
+    .btns .danger { color: #e08585; }
+    #closeBtn { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+    #toast {
+      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+      background: var(--gold); color: #14110a; font-family: system-ui, sans-serif;
+      padding: 10px 18px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 50;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="title ar">مواقيت الصلاة</div>
+      <div class="loc" id="locName">AMMAN · JORDAN</div>
+    </div>
+    <button id="gearBtn" title="Settings" aria-label="Settings">⚙</button>
+  </header>
+
+  <div class="clockline">
+    <div id="nowTime">--:--:--</div>
+    <div id="hijriLine" class="ar"></div>
+    <div id="dateLine"></div>
+  </div>
+
+  <section class="hero">
+    <div id="heroKicker">NEXT</div>
+    <div id="heroPrayerAr" class="ar">…</div>
+    <div id="heroPrayerEn"></div>
+    <div id="heroCountdown">--:--</div>
+    <div id="heroSub"></div>
+    <div class="progress"><i id="progressBar"></i></div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+
+  <footer>
+    Times follow the mosque clock method (Fajr 18° · Isha 18°) — tune everything in <a href="#" id="footSettings">settings</a>.
+  </footer>
+
+  <dialog id="settings">
+    <div class="sheet">
+      <h2>Settings <button id="closeBtn" aria-label="Close">✕</button></h2>
+      <p class="hint">Display settings save to this device instantly. The <b>phone notifications</b> are sent by GitHub in the background — after changing notification settings, use “Copy config” below and paste it into the GitHub file so the background sender matches.</p>
+
+      <h3>Location</h3>
+      <div class="row"><label>Place name</label><input type="text" class="wide" id="s_name" /></div>
+      <div class="row"><label>Latitude</label><input type="number" step="0.0001" id="s_lat" /></div>
+      <div class="row"><label>Longitude</label><input type="number" step="0.0001" id="s_lng" /></div>
+      <div class="row"><label>UTC offset (hours)</label><input type="number" step="0.5" id="s_utc" /></div>
+
+      <h3>Calculation</h3>
+      <div class="row"><label>Fajr angle (°)</label><input type="number" step="0.5" id="s_fajrAngle" /></div>
+      <div class="row"><label>Isha angle (°)</label><input type="number" step="0.5" id="s_ishaAngle" /></div>
+      <div class="row"><label>Asr method</label>
+        <select id="s_asrFactor"><option value="1">Standard</option><option value="2">Hanafi</option></select>
+      </div>
+
+      <h3>Fine-tune (minutes ±)</h3>
+      <p class="hint">Defaults are tuned so times match your mosque clock exactly.</p>
+      <div id="adjRows"></div>
+
+      <h3>Iqama (minutes after adhan)</h3>
+      <div id="iqamaRows"></div>
+
+      <h3>Bark notifications</h3>
+      <p class="hint">Install the free <b>Bark</b> app on your iPhone, copy your key from its home screen (the code in <code>https://api.day.app/YOURKEY/</code>), paste it below, then hit “Test”. To make the automatic background notifications work, also paste the key into the GitHub config (buttons below).</p>
+      <div class="row"><label>Bark key</label><input type="text" class="wide" id="s_barkKey" placeholder="e.g. AbCdEfGh123" /></div>
+      <div class="row"><label>Bark server</label><input type="text" class="wide" id="s_barkServer" /></div>
+      <div class="row"><label>Sound</label><input type="text" id="s_barkSound" /></div>
+      <div class="row"><label>Time-sensitive (breaks through Focus)</label><input type="checkbox" id="s_timeSensitive" /></div>
+      <div class="row"><label>“Adhan in X min” alert</label><input type="checkbox" id="s_nBeforeAdhan" /><input type="number" id="s_nBeforeAdhanMin" title="minutes before adhan" /></div>
+      <div class="row"><label>Alert at adhan time</label><input type="checkbox" id="s_nAtAdhan" /></div>
+      <div class="row"><label>“Iqama in X min” alert</label><input type="checkbox" id="s_nBeforeIqama" /><input type="number" id="s_nBeforeIqamaMin" title="minutes before iqama" /></div>
+      <div class="row"><label>Alert at iqama time</label><input type="checkbox" id="s_nAtIqama" /></div>
+      <div class="row" id="prayerToggles" style="gap:14px"></div>
+      <div class="btns">
+        <button id="testBark">Send test notification</button>
+      </div>
+
+      <div class="btns" style="margin-top:24px">
+        <button class="primary" id="saveBtn">Save</button>
+        <button id="copyCfg">Copy config for GitHub</button>
+        <a id="ghEdit" target="_blank" rel="noopener">Open GitHub config ↗</a>
+        <button class="danger" id="resetBtn">Reset defaults</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

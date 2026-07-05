@@ -1,0 +1,48 @@
+{
+  "location": {
+    "name": "Amman, Jordan",
+    "arabicName": "عمّان، الأردن",
+    "latitude": 31.95,
+    "longitude": 35.93,
+    "utcOffset": 3
+  },
+  "calculation": {
+    "fajrAngle": 18,
+    "ishaAngle": 18,
+    "asrFactor": 1,
+    "adjustments": {
+      "fajr": -1,
+      "sunrise": -6,
+      "dhuhr": 0,
+      "asr": 0,
+      "maghrib": 7,
+      "isha": 1
+    }
+  },
+  "iqama": {
+    "fajr": 25,
+    "dhuhr": 20,
+    "asr": 20,
+    "maghrib": 10,
+    "isha": 20
+  },
+  "bark": {
+    "key": "",
+    "server": "https://api.day.app",
+    "sound": "minuet",
+    "timeSensitive": true,
+    "notifications": {
+      "beforeAdhan": { "enabled": true, "minutes": 15 },
+      "atAdhan": { "enabled": true },
+      "beforeIqama": { "enabled": true, "minutes": 5 },
+      "atIqama": { "enabled": false }
+    },
+    "prayers": {
+      "fajr": true,
+      "dhuhr": true,
+      "asr": true,
+      "maghrib": true,
+      "isha": true
+    }
+  }
+}

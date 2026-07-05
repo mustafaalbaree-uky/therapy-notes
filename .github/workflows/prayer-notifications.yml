@@ -1,0 +1,47 @@
+# Sends Bark push notifications for adhan/iqama times.
+# Settings live in public/prayer/config.json; the Bark key comes from the
+# BARK_KEY repo secret (recommended) or config.json's bark.key.
+#
+# The cron covers 00:00-19:59 UTC = 03:00-22:59 in Jordan (UTC+3), which spans
+# every prayer moment year-round. GitHub cron can lag a few minutes; the
+# script looks back 14 minutes and dedupes via a cached state file, so
+# notifications are never doubled and rarely missed.
+#
+# Note: GitHub disables scheduled workflows after ~60 days without repo
+# activity — any commit (even editing config.json) keeps it alive.
+
+name: Prayer Bark notifications
+
+on:
+  schedule:
+    - cron: "*/5 0-19 * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Send a test notification immediately"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prayer-bark
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore sent-notification state
+        uses: actions/cache@v4
+        with:
+          path: .bark-state.json
+          key: bark-state-${{ github.run_id }}
+          restore-keys: |
+            bark-state-
+      - name: Send due notifications
+        run: node scripts/prayer-notify.mjs
+        env:
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          TEST_PUSH: ${{ inputs.test && '1' || '' }}
