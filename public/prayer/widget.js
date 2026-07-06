@@ -257,17 +257,19 @@ sub.textColor = C.muted;
 sub.lineLimit = 1;
 sub.minimumScaleFactor = 0.7;
 
-// progress bar — fills as the time to the next event elapses
+// progress bar — fills as the time to the next event elapses. The trailing
+// spacer stretches the track to the full card width so it sits snugly edge
+// to edge; the gold fill is a fixed fraction of that width, left-aligned.
 w.addSpacer(family === "small" ? 6 : 8);
-const barW = family === "small" ? 120 : family === "large" ? 300 : 285;
+const estFull = family === "small" ? 150 : family === "large" ? 330 : 310;
 const track = w.addStack();
-track.size = new Size(barW, 5);
 track.cornerRadius = 2.5;
 track.backgroundColor = C.line;
 const fill = track.addStack();
-fill.size = new Size(Math.max(3, Math.round(barW * pct)), 5);
+fill.size = new Size(Math.max(4, Math.round(estFull * pct)), 5);
 fill.cornerRadius = 2.5;
 fill.backgroundColor = C.gold;
+track.addSpacer();
 
 // today's timetable (medium / large only)
 if (family !== "small") {
