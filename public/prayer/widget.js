@@ -9,8 +9,10 @@
 // It reads the same public/prayer/config.json as the website, so location,
 // calculation method, tuning and iqama offsets always match.
 
+// Pulled from raw.githubusercontent (not GitHub Pages) so it's available the
+// instant it's on main and never returns an HTML/404 page mid-deploy.
 const CONFIG_URL =
-  "https://mustafaalbaree-uky.github.io/therapy-notes/prayer/config.json";
+  "https://raw.githubusercontent.com/mustafaalbaree-uky/therapy-notes/main/public/prayer/config.json";
 
 // ---- prayer calculation (mirrors public/prayer/prayertimes.js) ----
 const DEG = Math.PI / 180;
