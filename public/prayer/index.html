@@ -44,6 +44,10 @@
       user-select: none;
       touch-action: manipulation;
     }
+    /* Never let the flex column compress a section — if content is taller
+       than the screen the page should scroll, not shrink cards (which would
+       clip the hero's countdown behind its overflow:hidden). */
+    body > * { flex-shrink: 0; }
     /* Still allow selecting the config JSON / key fields. */
     input, select, textarea { -webkit-user-select: text; user-select: text; }
     .ar { font-family: "Amiri", "Geeza Pro", "Traditional Arabic", serif; }
