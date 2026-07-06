@@ -1,11 +1,23 @@
 {
   "location": {
-    "name": "Amman, Jordan",
-    "arabicName": "عمّان، الأردن",
+    "name": "Masjid al-Bushra",
+    "arabicName": "مسجد البشرى",
     "latitude": 31.95,
     "longitude": 35.93,
     "utcOffset": 3
   },
+  "quotes": [
+    {
+      "arabic": "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتًا",
+      "translation": "Indeed, prayer is a timed prescription for the believers.",
+      "source": "Qur'an — Sūrat an-Nisāʾ 4:103"
+    },
+    {
+      "arabic": "وَجُعِلَتْ قُرَّةُ عَيْنِي فِي الصَّلَاةِ",
+      "translation": "And the coolness of my eyes has been placed in prayer.",
+      "source": "Prophet Muḥammad ﷺ — Sunan an-Nasāʾī"
+    }
+  ],
   "calculation": {
     "fajrAngle": 18,
     "ishaAngle": 18,

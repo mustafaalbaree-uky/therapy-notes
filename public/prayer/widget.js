@@ -169,13 +169,36 @@ for (const p of ADHAN_PRAYERS) {
 const fajrTom = epochAt(tomorrow, tTomorrow.fajr);
 events.push({ prayer: "fajr", kind: "adhan", epoch: fajrTom, minutes: tTomorrow.fajr, tomorrow: true });
 
-const next = events.find((e) => e.epoch > nowMs) || events[events.length - 1];
+const nextIdx = events.findIndex((e) => e.epoch > nowMs);
+const next = nextIdx >= 0 ? events[nextIdx] : events[events.length - 1];
+
+// How far we are between the previous event and the next one, for the bar.
+const prevEpoch = nextIdx > 0 ? events[nextIdx - 1].epoch : nowMs - 1;
+const span = Math.max(1, next.epoch - prevEpoch);
+const pct = Math.min(1, Math.max(0, (nowMs - prevEpoch) / span));
 
 function countdown(ms) {
   const m = Math.max(0, Math.round(ms / 60e3));
   const h = Math.floor(m / 60);
   return h > 0 ? `${h}h ${m % 60}m` : `${m}m`;
 }
+
+// Short clock (no AM/PM) so the 5-column timetable never wraps.
+function formatShort(total) {
+  const m = ((Math.round(total) % 1440) + 1440) % 1440;
+  const h24 = Math.floor(m / 60);
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(m % 60).padStart(2, "0")}`;
+}
+
+// Daily-rotating quote (verified sources only; edit them in config.json).
+const quotes = cfg.quotes && cfg.quotes.length ? cfg.quotes : null;
+const dayOfYear = Math.floor(
+  (Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()) -
+    Date.UTC(local.getUTCFullYear(), 0, 0)) /
+    864e5
+);
+const quote = quotes ? quotes[dayOfYear % quotes.length] : null;
 
 // ---- colors / fonts ----
 const C = {
@@ -226,16 +249,29 @@ cd.textColor = C.text;
 
 const sub = w.addText(
   next.kind === "adhan"
-    ? `${name.en} · adhan ${formatMinutes(next.minutes)} · iqama ${formatMinutes(next.minutes + cfg.iqama[next.prayer])}`
-    : `${name.en} · iqama at ${formatMinutes(next.minutes)}`
+    ? `${name.en} · Adhan ${formatMinutes(next.minutes)} · Iqama ${formatMinutes(next.minutes + cfg.iqama[next.prayer])}`
+    : `${name.en} · Iqama at ${formatMinutes(next.minutes)}`
 );
 sub.font = Font.systemFont(family === "small" ? 9 : 11);
 sub.textColor = C.muted;
 sub.lineLimit = 1;
+sub.minimumScaleFactor = 0.7;
+
+// progress bar — fills as the time to the next event elapses
+w.addSpacer(family === "small" ? 6 : 8);
+const barW = family === "small" ? 120 : family === "large" ? 300 : 285;
+const track = w.addStack();
+track.size = new Size(barW, 5);
+track.cornerRadius = 2.5;
+track.backgroundColor = C.line;
+const fill = track.addStack();
+fill.size = new Size(Math.max(3, Math.round(barW * pct)), 5);
+fill.cornerRadius = 2.5;
+fill.backgroundColor = C.gold;
 
 // today's timetable (medium / large only)
 if (family !== "small") {
-  w.addSpacer(10);
+  w.addSpacer(9);
   const grid = w.addStack();
   grid.spacing = 6;
   const activePrayer = next.tomorrow ? null : next.prayer;
@@ -243,7 +279,6 @@ if (family !== "small") {
     const col = grid.addStack();
     col.layoutVertically();
     col.centerAlignContent();
-    col.addSpacer(0);
     const isPast = epochAt(today, tToday[p]) + cfg.iqama[p] * 60e3 < nowMs;
     const isActive = p === activePrayer;
     const cell = col.addStack();
@@ -251,15 +286,34 @@ if (family !== "small") {
     const nm = cell.addText(NAMES[p].en);
     nm.font = Font.mediumSystemFont(10);
     nm.textColor = isActive ? C.gold : isPast ? C.dim : C.muted;
+    nm.lineLimit = 1;
+    nm.minimumScaleFactor = 0.6;
     cell.addSpacer();
     const tt = col.addStack();
     tt.addSpacer();
-    const tm = tt.addText(formatMinutes(tToday[p]).replace(/ /g, ""));
+    const tm = tt.addText(formatShort(tToday[p]));
     tm.font = isActive ? Font.boldSystemFont(12) : Font.systemFont(12);
     tm.textColor = isActive ? C.gold : isPast ? C.dim : C.text;
+    tm.lineLimit = 1;
+    tm.minimumScaleFactor = 0.6;
     tt.addSpacer();
     grid.addSpacer(2);
   }
+}
+
+// quote (verified source) — one small line on medium/large
+if (quote && family !== "small") {
+  w.addSpacer(family === "large" ? 10 : 8);
+  const qt = w.addText("“" + quote.translation + "”");
+  qt.font = Font.lightSystemFont(family === "large" ? 11 : 9);
+  qt.textColor = C.muted;
+  qt.lineLimit = family === "large" ? 3 : 2;
+  qt.minimumScaleFactor = 0.7;
+  const qs = w.addText("— " + quote.source);
+  qs.font = Font.mediumSystemFont(family === "large" ? 9 : 8);
+  qs.textColor = C.goldSoft;
+  qs.lineLimit = 1;
+  qs.minimumScaleFactor = 0.6;
 }
 
 // Ask iOS to refresh soon so the countdown stays fresh (iOS throttles this).

@@ -141,7 +141,7 @@ function renderGrid() {
     const iqama =
       p === "sunrise"
         ? `<span>—</span>`
-        : `iqama <span>${formatMinutes(cache.tToday[p] + cfg.iqama[p], { meridiem: false })}</span>`;
+        : `Iqama <span>${formatMinutes(cache.tToday[p] + cfg.iqama[p], { meridiem: false })}</span>`;
     cell.innerHTML = `
       <div class="nameAr ar">${NAMES[p].ar}</div>
       <div class="nameEn">${NAMES[p].en}</div>
@@ -359,6 +359,26 @@ function applyHeader() {
   $("locName").textContent = cfg.location.name.toUpperCase().replaceAll(",", " ·");
 }
 
+function renderQuote() {
+  const quotes = cfg.quotes;
+  const box = $("quote");
+  if (!quotes || !quotes.length) {
+    box.hidden = true;
+    return;
+  }
+  // Rotate by day so it changes daily but stays stable within a day.
+  const ln = localNow();
+  const dayOfYear = Math.floor(
+    (Date.UTC(ln.getUTCFullYear(), ln.getUTCMonth(), ln.getUTCDate()) -
+      Date.UTC(ln.getUTCFullYear(), 0, 0)) / 864e5
+  );
+  const q = quotes[dayOfYear % quotes.length];
+  $("quoteAr").textContent = q.arabic || "";
+  $("quoteEn").textContent = q.translation ? `“${q.translation}”` : "";
+  $("quoteSrc").textContent = q.source ? `— ${q.source}` : "";
+  box.hidden = false;
+}
+
 async function main() {
   const res = await fetch("./config.json", { cache: "no-cache" });
   defaults = await res.json();
@@ -366,6 +386,7 @@ async function main() {
   buildAdjustRows();
   wireUi();
   applyHeader();
+  renderQuote();
   tick();
   setInterval(tick, 250);
 }
