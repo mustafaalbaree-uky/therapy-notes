@@ -59,10 +59,16 @@ One-time setup (~2 min):
 3. Delete the placeholder and paste this **loader** exactly:
 
    ```js
-   const url = "https://mustafaalbaree-uky.github.io/therapy-notes/prayer/widget.js";
+   const url = "https://mustafaalbaree-uky.github.io/therapy-notes/prayer/widget.js?v=" + Date.now();
    const code = await new Request(url).loadString();
    await new Function("return (async () => {" + code + "})()")();
    ```
+
+   (The `?v=` cache-buster forces Scriptable past GitHub's CDN cache so you
+   always get the latest widget code and never a stale "not found" page. If
+   you ever see `SyntaxError: Unexpected token '<'`, the fetch returned an
+   HTML error page instead of the script — that means the CDN cache was
+   stale; the cache-buster prevents it.)
 
 4. Tap the script's name at the top, rename it to **Prayer Times**, tap Done.
    (Tap ▶ to preview it right there.)
