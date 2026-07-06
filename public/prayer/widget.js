@@ -245,9 +245,21 @@ const ar = big.addText(name.ar);
 ar.font = Font.boldSystemFont(family === "small" ? 24 : 30);
 ar.textColor = C.gold;
 big.addSpacer(8);
-const cd = big.addText(countdown(next.epoch - nowMs));
-cd.font = Font.boldSystemFont(family === "small" ? 22 : 28);
-cd.textColor = C.text;
+const remaining = next.epoch - nowMs;
+const cdFont = Font.boldSystemFont(family === "small" ? 22 : 28);
+if (remaining < 3600e3) {
+  // Under an hour: a native live timer that ticks MM:SS every second
+  // (widgets can't redraw per-second, so this is the only truly live option).
+  const cd = big.addDate(new Date(next.epoch));
+  cd.applyTimerStyle();
+  cd.font = cdFont;
+  cd.textColor = C.text;
+} else {
+  // An hour or more away: static hours + minutes, no seconds.
+  const cd = big.addText(countdown(remaining));
+  cd.font = cdFont;
+  cd.textColor = C.text;
+}
 
 const sub = w.addText(
   next.kind === "adhan"
@@ -320,8 +332,15 @@ if (quote && family !== "small") {
   qs.minimumScaleFactor = 0.6;
 }
 
-// Ask iOS to refresh soon so the countdown stays fresh (iOS throttles this).
-w.refreshAfterDate = new Date(nowMs + 10 * 60e3);
+// Ask iOS when to redraw (it throttles this). In live-timer mode the seconds
+// tick on their own, so we only need a redraw just after the event to advance
+// to the next one; otherwise redraw at the 1-hour mark (to switch into timer
+// mode) or in ~10 min, whichever comes first.
+w.refreshAfterDate = new Date(
+  remaining < 3600e3
+    ? next.epoch + 1000
+    : Math.min(nowMs + 10 * 60e3, next.epoch - 3600e3 + 1000)
+);
 
 if (config.runsInWidget) {
   Script.setWidget(w);
