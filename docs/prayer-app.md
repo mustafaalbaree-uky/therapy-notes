@@ -43,6 +43,41 @@ config for GitHub** → **Open GitHub config ↗** → select all, paste, commit
 Display-only changes (how the page shows times) apply instantly without any
 of that — they save to the device.
 
+## iPhone home-screen widget (Scriptable)
+
+A home-screen widget shows the next prayer without opening anything. It's
+built with **Scriptable** — a free app that runs your own JavaScript as a
+widget (the widget-world equivalent of Bark). The real code lives in
+[`public/prayer/widget.js`](../public/prayer/widget.js) and is loaded from
+the deployed site, so it always matches your `config.json` and any later
+change ships automatically — you never re-paste.
+
+One-time setup (~2 min):
+
+1. Install **Scriptable** from the App Store.
+2. Open it → tap **+** (top-right) to make a new script.
+3. Delete the placeholder and paste this **loader** exactly:
+
+   ```js
+   const url = "https://mustafaalbaree-uky.github.io/therapy-notes/prayer/widget.js";
+   const code = await new Request(url).loadString();
+   await new Function("return (async () => {" + code + "})()")();
+   ```
+
+4. Tap the script's name at the top, rename it to **Prayer Times**, tap Done.
+   (Tap ▶ to preview it right there.)
+5. Go to your home screen → long-press → **+** → search **Scriptable** →
+   pick a size (medium shows the full timetable) → **Add Widget**.
+6. Long-press the new widget → **Edit Widget** → set **Script** to
+   *Prayer Times*. Leave "When Interacting" as *Run Script* (or set it to
+   open the URL). Done.
+
+The widget shows the next adhan (or the iqama once the adhan has passed)
+with a countdown, plus today's five prayer times on the medium/large sizes.
+Tapping it opens the full web app. iOS decides how often widgets refresh
+(usually every several minutes), so the countdown updates in steps, not by
+the second.
+
 ## Notes
 
 - GitHub cron isn't exact — pushes can arrive a few minutes late at busy

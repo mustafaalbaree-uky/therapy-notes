@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
   <meta name="theme-color" content="#0b0d12" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -25,6 +25,9 @@
       --active-glow: 0 0 40px rgba(212, 175, 55, 0.14);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    /* App-feel: no pinch/double-tap zoom, no iOS text auto-scaling, no
+       rubber-band overscroll or accidental text selection. */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: manipulation; overscroll-behavior: none; }
     html, body { height: 100%; }
     body {
       background:
@@ -37,7 +40,12 @@
       align-items: center;
       min-height: 100dvh;
       padding: max(env(safe-area-inset-top), 14px) 16px calc(env(safe-area-inset-bottom) + 24px);
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
     }
+    /* Still allow selecting the config JSON / key fields. */
+    input, select, textarea { -webkit-user-select: text; user-select: text; }
     .ar { font-family: "Amiri", "Geeza Pro", "Traditional Arabic", serif; }
 
     header {
