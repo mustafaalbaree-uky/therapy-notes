@@ -41,7 +41,7 @@
   "bark": {
     "key": "",
     "server": "https://api.day.app",
-    "sound": "minuet",
+    "sound": "shake",
     "timeSensitive": true,
     "notifications": {
       "beforeAdhan": { "enabled": true, "minutes": 15 },
