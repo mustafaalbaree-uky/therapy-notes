@@ -1,20 +1,24 @@
 # Sends Bark push notifications for adhan/iqama times.
+#
 # Settings live in public/prayer/config.json; the Bark key comes from the
 # BARK_KEY repo secret (recommended) or config.json's bark.key.
 #
-# The cron covers 00:00-19:59 UTC = 03:00-22:59 in Jordan (UTC+3), which spans
-# every prayer moment year-round. GitHub cron can lag a few minutes; the
-# script looks back 14 minutes and dedupes via a cached state file, so
-# notifications are never doubled and rarely missed.
+# GitHub's cron is unreliable for exact timing (it fires only a handful of
+# times a day, not every 5 min). So each run starts a long-lived job that
+# sleeps precisely until each notification moment and sends it — the cron just
+# needs to (re)start that job now and then. `cancel-in-progress: true` means
+# the newest run replaces the old sleeping one, and the loop only spans a few
+# hours so overnight/Fajr is covered by an evening or early-morning run.
 #
+# Public repos get unlimited free Actions minutes, so the sleeping job is free.
 # Note: GitHub disables scheduled workflows after ~60 days without repo
-# activity — any commit (even editing config.json) keeps it alive.
+# activity — any commit keeps it alive.
 
 name: Prayer Bark notifications
 
 on:
   schedule:
-    - cron: "*/5 0-19 * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       test:
@@ -25,23 +29,26 @@ on:
 permissions:
   contents: read
 
+# Newest run takes over from any still-sleeping older run.
 concurrency:
   group: prayer-bark
+  cancel-in-progress: true
 
 jobs:
   notify:
     runs-on: ubuntu-latest
+    # Long enough to cover a big chunk of the day by sleeping to each moment.
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
-      - name: Restore sent-notification state
-        uses: actions/cache@v4
+      - uses: actions/setup-node@v4
         with:
-          path: .bark-state.json
-          key: bark-state-${{ github.run_id }}
-          restore-keys: |
-            bark-state-
-      - name: Send due notifications
+          node-version: 20
+      - name: Sleep-until-due notification loop
         run: node scripts/prayer-notify.mjs
         env:
           BARK_KEY: ${{ secrets.BARK_KEY }}
+          # test dispatch -> single test; everything else -> the loop
           TEST_PUSH: ${{ inputs.test && '1' || '' }}
+          LOOP: ${{ inputs.test && '' || '1' }}
+          LOOP_MINUTES: "350"

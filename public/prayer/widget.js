@@ -179,12 +179,6 @@ const prevEpoch = nextIdx > 0 ? events[nextIdx - 1].epoch : nowMs - 1;
 const span = Math.max(1, next.epoch - prevEpoch);
 const pct = Math.min(1, Math.max(0, (nowMs - prevEpoch) / span));
 
-function countdown(ms) {
-  const m = Math.max(0, Math.round(ms / 60e3));
-  const h = Math.floor(m / 60);
-  return h > 0 ? `${h}h ${m % 60}m` : `${m}m`;
-}
-
 // Short clock (no AM/PM) so the 5-column timetable never wraps.
 function formatShort(total) {
   const m = ((Math.round(total) % 1440) + 1440) % 1440;
@@ -245,21 +239,15 @@ const ar = big.addText(name.ar);
 ar.font = Font.boldSystemFont(family === "small" ? 24 : 30);
 ar.textColor = C.gold;
 big.addSpacer(8);
-const remaining = next.epoch - nowMs;
+// Always a native live timer, so the countdown ticks every second on its own
+// without iOS having to redraw the widget (static text would freeze between
+// the system's infrequent refreshes). iOS shows H:MM:SS when over an hour
+// away and MM:SS when under.
 const cdFont = Font.boldSystemFont(family === "small" ? 22 : 28);
-if (remaining < 3600e3) {
-  // Under an hour: a native live timer that ticks MM:SS every second
-  // (widgets can't redraw per-second, so this is the only truly live option).
-  const cd = big.addDate(new Date(next.epoch));
-  cd.applyTimerStyle();
-  cd.font = cdFont;
-  cd.textColor = C.text;
-} else {
-  // An hour or more away: static hours + minutes, no seconds.
-  const cd = big.addText(countdown(remaining));
-  cd.font = cdFont;
-  cd.textColor = C.text;
-}
+const cd = big.addDate(new Date(next.epoch));
+cd.applyTimerStyle();
+cd.font = cdFont;
+cd.textColor = C.text;
 
 const sub = w.addText(
   next.kind === "adhan"
@@ -332,15 +320,11 @@ if (quote && family !== "small") {
   qs.minimumScaleFactor = 0.6;
 }
 
-// Ask iOS when to redraw (it throttles this). In live-timer mode the seconds
-// tick on their own, so we only need a redraw just after the event to advance
-// to the next one; otherwise redraw at the 1-hour mark (to switch into timer
-// mode) or in ~10 min, whichever comes first.
-w.refreshAfterDate = new Date(
-  remaining < 3600e3
-    ? next.epoch + 1000
-    : Math.min(nowMs + 10 * 60e3, next.epoch - 3600e3 + 1000)
-);
+// The seconds tick on their own (native timer). We ask iOS to redraw at the
+// event — to roll over to the next prayer — or within ~15 min to nudge the
+// progress bar / pick up config changes, whichever comes first. iOS throttles
+// these requests, so everything except the countdown updates on its schedule.
+w.refreshAfterDate = new Date(Math.min(next.epoch + 2000, nowMs + 15 * 60e3));
 
 if (config.runsInWidget) {
   Script.setWidget(w);
