@@ -17,8 +17,11 @@
 name: Prayer Bark notifications
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
+  # Paused: the cron restart was keeping the sleep-until-due loop running
+  # around the clock, firing real Bark notifications with no working
+  # frontend settings to control them. Uncomment to resume.
+  # schedule:
+  #   - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       test:
