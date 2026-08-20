@@ -44,7 +44,7 @@
       user-select: none;
       touch-action: manipulation;
     }
-    /* Never let the flex column compress a section — if content is taller
+    /* Never let the flex column compress a section. If content is taller
        than the screen the page should scroll, not shrink cards (which would
        clip the hero's countdown behind its overflow:hidden). */
     body > * { flex-shrink: 0; }
@@ -196,8 +196,8 @@
       border-radius: 9px;
       padding: 8px 10px;
       /* iOS Safari zooms the page on focus if a field's font-size is under
-         16px — keep this at 16px exactly to stop that, then compensate
-         visually with tighter padding/width. */
+         16px, so keep this at 16px exactly to stop that, then compensate
+         visually with tighter padding and width. */
       font-size: 16px;
       width: 110px;
     }
@@ -260,13 +260,13 @@
   </blockquote>
 
   <footer>
-    Times follow the mosque clock method (Fajr 18° · Isha 18°) — tune everything in <a href="#" id="footSettings">settings</a>.
+    Times follow the mosque clock method (Fajr 18° · Isha 18°). Tune everything in <a href="#" id="footSettings">settings</a>.
   </footer>
 
   <dialog id="settings">
     <div class="sheet">
       <h2>Settings <button id="closeBtn" aria-label="Close">✕</button></h2>
-      <p class="hint">Display settings save to this device instantly. The <b>phone notifications</b> are sent by GitHub in the background — after changing notification settings, use “Copy config” below and paste it into the GitHub file so the background sender matches.</p>
+      <p class="hint">Display settings save to this device instantly. The <b>phone notifications</b> are sent by GitHub in the background. After changing notification settings, use “Copy config” below and paste it into the GitHub file so the background sender matches.</p>
 
       <h3>Location</h3>
       <div class="row"><label>Place name</label><input type="text" class="wide" id="s_name" /></div>

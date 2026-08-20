@@ -20,7 +20,7 @@ Return ONLY the JSON object, no preamble, no code fences.`
 function labelInstructions(): string {
   return `You are given the raw transcript of a therapy session between two people: the client (refer to them as "You") and their therapist (refer to them as "Marty").
 Rewrite the transcript attributing each turn to the correct speaker, using markdown bold labels like "**You:**" and "**Marty:**" at the start of each turn, with a blank line between turns.
-This is best-effort: infer who is speaking from context. Do not add, remove, or summarize content — only attribute the existing words.
+This is best effort: infer who is speaking from context. Do not add, remove, or summarize content. Only attribute the existing words.
 Return ONLY the labeled transcript text, no preamble, no code fences.`
 }
 

@@ -7,7 +7,7 @@
 //
 // Both the URL and the anon key are public-safe (RLS gates all access), so
 // committing them is fine: without a logged-in session they can read no rows.
-// The `service_role` key is NOT here — it lives only in the iOS shortcut.
+// The `service_role` key is NOT here. It lives only in the iOS shortcut.
 
 const LS_URL = 'tn.supabase.url'
 const LS_ANON = 'tn.supabase.anonKey'

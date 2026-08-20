@@ -2,7 +2,7 @@
 
 A self-contained static app served alongside the main site at
 **`/prayer/`** (https://mustafaalbaree-uky.github.io/therapy-notes/prayer/).
-It shares nothing with the Therapy Notes app — it lives entirely in
+It shares nothing with the Therapy Notes app. It lives entirely in
 `public/prayer/` and is copied verbatim into the Pages build.
 
 ## What it does
@@ -21,14 +21,14 @@ It shares nothing with the Therapy Notes app — it lives entirely in
 ## Bark setup (one time)
 
 1. Install **Bark** from the App Store and open it once. Allow notifications.
-2. Copy your key — the code in the URL Bark shows you,
+2. Copy your key, the code in the URL Bark shows you,
    `https://api.day.app/YOURKEY/...`.
 3. Give the key to the sender, either way works:
    - **Recommended:** repo → Settings → Secrets and variables → Actions →
      *New repository secret* named `BARK_KEY` with the key as value.
    - **Simpler:** edit [`public/prayer/config.json`](../public/prayer/config.json)
      and put the key in `bark.key`. (The repo is public, so anyone who finds
-     the key could send you notifications — the secret avoids that.)
+     the key could send you notifications, and the secret avoids that.)
 4. Test it: Actions → *Prayer Bark notifications* → *Run workflow* → tick
    *Send a test notification*.
 
@@ -41,16 +41,16 @@ time-sensitive level, location and calculation method.
 Easiest flow from the phone: open the app → ⚙ settings → adjust → **Copy
 config for GitHub** → **Open GitHub config ↗** → select all, paste, commit.
 Display-only changes (how the page shows times) apply instantly without any
-of that — they save to the device.
+of that, because they save to the device.
 
 ## iPhone home-screen widget (Scriptable)
 
 A home-screen widget shows the next prayer without opening anything. It's
-built with **Scriptable** — a free app that runs your own JavaScript as a
+built with **Scriptable**, a free app that runs your own JavaScript as a
 widget (the widget-world equivalent of Bark). The real code lives in
 [`public/prayer/widget.js`](../public/prayer/widget.js) and is loaded from
 the deployed site, so it always matches your `config.json` and any later
-change ships automatically — you never re-paste.
+change ships automatically and you never paste again.
 
 One-time setup (~2 min):
 
@@ -61,12 +61,12 @@ One-time setup (~2 min):
    ```js
    const url = "https://raw.githubusercontent.com/mustafaalbaree-uky/therapy-notes/main/public/prayer/widget.js";
    const code = await new Request(url).loadString();
-   if (!code.includes("computePrayerTimes")) throw new Error("Couldn't load widget code — got: " + code.slice(0, 40));
+   if (!code.includes("computePrayerTimes")) throw new Error("Couldn't load widget code, got: " + code.slice(0, 40));
    await new Function("return (async () => {" + code + "})()")();
    ```
 
    (It loads from `raw.githubusercontent.com`, not GitHub Pages, so it gets
-   the real file the moment it's on `main` — GitHub Pages can briefly serve
+   the real file the moment it's on `main`, because GitHub Pages can briefly serve
    an HTML error page for a `.js` file right after a deploy, which caused the
    old `SyntaxError: Unexpected token '<'`. The guard line turns any odd
    response into a clear message instead of that cryptic error.)
@@ -87,10 +87,10 @@ the second.
 
 ## Notes
 
-- GitHub cron isn't exact — pushes can arrive a few minutes late at busy
+- GitHub cron isn't exact, so pushes can arrive a few minutes late at busy
   times. The sender looks back 14 minutes and dedupes, so alerts aren't
   doubled or silently dropped.
-- The schedule covers 03:00–22:59 Jordan time, which spans all prayer
+- The schedule covers 03:00 to 22:59 Jordan time, which spans all prayer
   moments year-round. If you change `utcOffset` to a very different
   timezone, widen the `cron` window in
   `.github/workflows/prayer-notifications.yml`.

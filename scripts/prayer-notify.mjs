@@ -1,6 +1,6 @@
 // Sends Bark push notifications for prayer (adhan/iqama) times.
 //
-// GitHub's scheduled cron is unreliable for minute-accurate timing — it fires
+// GitHub's scheduled cron is unreliable for minute accurate timing, since it fires
 // only a handful of times a day, nowhere near every prayer. So instead of
 // "send whatever is due right now", the default LOOP mode runs a long-lived
 // job (public repos allow ~6h jobs, free) that sleeps precisely until each
@@ -54,15 +54,15 @@ async function sendBark(title, body) {
     `?group=prayer&sound=${encodeURIComponent(bark.sound || "minuet")}` +
     (bark.timeSensitive ? "&level=timeSensitive" : "");
   if (dryRun) {
-    console.log(`[dry-run] ${title} — ${body}`);
+    console.log(`[dry-run] ${title}: ${body}`);
     return;
   }
   try {
     const res = await fetch(url);
     const text = await res.text().catch(() => "");
-    console.log(`sent: ${title} — ${body} → HTTP ${res.status} ${text.slice(0, 100)}`);
+    console.log(`sent: ${title}: ${body} → HTTP ${res.status} ${text.slice(0, 100)}`);
   } catch (e) {
-    console.log(`send failed: ${title} — ${e.message}`);
+    console.log(`send failed: ${title}: ${e.message}`);
   }
 }
 
@@ -109,14 +109,14 @@ function eventsForDate(dateLocal) {
       );
     if (n.atAdhan.enabled)
       add("atAdhan", adhanMs, () =>
-        `It is time for ${name.en} — الله أكبر · iqama in ${minutesLeft(iqamaMs)} minutes (${iqamaStr})`
+        `It is time for ${name.en} · الله أكبر · iqama in ${minutesLeft(iqamaMs)} minutes (${iqamaStr})`
       );
     if (n.beforeIqama.enabled)
       add("beforeIqama", iqamaMs - n.beforeIqama.minutes * 60e3, () =>
         `Iqama for ${name.en} is in ${minutesLeft(iqamaMs)} minutes (${iqamaStr})`
       );
     if (n.atIqama.enabled)
-      add("atIqama", iqamaMs, () => `Iqama for ${name.en} — قد قامت الصلاة`);
+      add("atIqama", iqamaMs, () => `Iqama for ${name.en} · قد قامت الصلاة`);
   }
   return events;
 }

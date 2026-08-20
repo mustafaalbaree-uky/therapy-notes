@@ -10,7 +10,7 @@ const NAMES = {
 };
 const ADHAN_PRAYERS = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
 
-// Bark's built-in alert tones (iOS system "New" sounds) — the full set the
+// Bark's built in alert tones (iOS system "New" sounds), the full set the
 // Bark server accepts for its `sound` query param.
 const BARK_SOUNDS = [
   "alarm", "anticipate", "bell", "birdsong", "bloom", "calypso", "chime",
@@ -140,7 +140,7 @@ function renderGrid() {
     const adhan = formatMinutes(cache.tToday[p], { meridiem: false });
     const iqama =
       p === "sunrise"
-        ? `<span>—</span>`
+        ? `<span>·</span>`
         : `Iqama <span>${formatMinutes(cache.tToday[p] + cfg.iqama[p], { meridiem: false })}</span>`;
     cell.innerHTML = `
       <div class="nameAr ar">${NAMES[p].ar}</div>
@@ -335,7 +335,7 @@ function wireUi() {
     const json = JSON.stringify(deepMerge(defaults, formToSettings()), null, 2) + "\n";
     try {
       await navigator.clipboard.writeText(json);
-      toast("Config copied — paste it into the GitHub file");
+      toast("Config copied. Paste it into the GitHub file");
     } catch {
       prompt("Copy this JSON into public/prayer/config.json on GitHub:", json);
     }
@@ -346,11 +346,11 @@ function wireUi() {
     if (!s.bark.key) return toast("Enter your Bark key first");
     const url =
       `${s.bark.server.replace(/\/+$/, "")}/${encodeURIComponent(s.bark.key)}/` +
-      `${encodeURIComponent("🕌 مواقيت الصلاة")}/${encodeURIComponent("Test notification — Bark is connected ✓")}` +
+      `${encodeURIComponent("🕌 مواقيت الصلاة")}/${encodeURIComponent("Test notification · Bark is connected ✓")}` +
       `?group=prayer&sound=${encodeURIComponent(s.bark.sound)}` +
       (s.bark.timeSensitive ? "&level=timeSensitive" : "");
     fetch(url, { mode: "no-cors" })
-      .then(() => toast("Test sent — check your iPhone"))
+      .then(() => toast("Test sent. Check your iPhone"))
       .catch(() => toast("Could not reach Bark server"));
   });
 }
@@ -375,7 +375,7 @@ function renderQuote() {
   const q = quotes[dayOfYear % quotes.length];
   $("quoteAr").textContent = q.arabic || "";
   $("quoteEn").textContent = q.translation ? `“${q.translation}”` : "";
-  $("quoteSrc").textContent = q.source ? `— ${q.source}` : "";
+  $("quoteSrc").textContent = q.source ? `· ${q.source}` : "";
   box.hidden = false;
 }
 

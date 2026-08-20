@@ -5,14 +5,14 @@
 #
 # GitHub's cron is unreliable for exact timing (it fires only a handful of
 # times a day, not every 5 min). So each run starts a long-lived job that
-# sleeps precisely until each notification moment and sends it — the cron just
+# sleeps precisely until each notification moment and sends it. The cron just
 # needs to (re)start that job now and then. `cancel-in-progress: true` means
 # the newest run replaces the old sleeping one, and the loop only spans a few
 # hours so overnight/Fajr is covered by an evening or early-morning run.
 #
 # Public repos get unlimited free Actions minutes, so the sleeping job is free.
 # Note: GitHub disables scheduled workflows after ~60 days without repo
-# activity — any commit keeps it alive.
+# activity, so any commit keeps it alive.
 
 name: Prayer Bark notifications
 

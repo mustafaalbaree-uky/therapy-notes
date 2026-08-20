@@ -30,7 +30,7 @@ export function Setup() {
         <h1>Connect Supabase</h1>
         <p className="sub">
           Paste your project URL and the <strong>anon</strong> public key. Both are safe to store
-          here — Row Level Security keeps your data private.
+          here. Row Level Security keeps your data private.
         </p>
 
         <label className="field">

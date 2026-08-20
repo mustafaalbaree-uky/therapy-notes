@@ -1,4 +1,4 @@
--- Therapy Notes — database schema.
+-- Therapy Notes database schema.
 -- Run this once in the Supabase SQL editor for your project.
 --
 -- Row Level Security is what keeps the transcripts private even though the web

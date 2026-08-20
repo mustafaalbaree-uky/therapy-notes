@@ -2,7 +2,7 @@
 //
 // You don't paste this whole file. In Scriptable you paste a tiny 3-line
 // loader (see docs/prayer-app.md) that fetches and runs this script, so any
-// later change here updates your widget automatically — no re-pasting.
+// later change here updates your widget automatically, with no repasting.
 //
 // Shows the next adhan (or the iqama, once the adhan has passed) with a
 // live-ish countdown, plus today's full timetable on the medium/large sizes.
@@ -259,7 +259,7 @@ sub.textColor = C.muted;
 sub.lineLimit = 1;
 sub.minimumScaleFactor = 0.7;
 
-// progress bar — fills as the time to the next event elapses. The trailing
+// progress bar, fills as the time to the next event elapses. The trailing
 // spacer stretches the track to the full card width so it sits snugly edge
 // to edge; the gold fill is a fixed fraction of that width, left-aligned.
 w.addSpacer(family === "small" ? 6 : 8);
@@ -305,7 +305,7 @@ if (family !== "small") {
   }
 }
 
-// quote (verified source) — one small line on medium/large
+// quote (verified source), one small line on medium and large
 if (quote && family !== "small") {
   w.addSpacer(family === "large" ? 10 : 8);
   const qt = w.addText("“" + quote.translation + "”");
@@ -313,7 +313,7 @@ if (quote && family !== "small") {
   qt.textColor = C.muted;
   qt.lineLimit = family === "large" ? 3 : 2;
   qt.minimumScaleFactor = 0.7;
-  const qs = w.addText("— " + quote.source);
+  const qs = w.addText("· " + quote.source);
   qs.font = Font.mediumSystemFont(family === "large" ? 9 : 8);
   qs.textColor = C.goldSoft;
   qs.lineLimit = 1;
@@ -321,7 +321,7 @@ if (quote && family !== "small") {
 }
 
 // The seconds tick on their own (native timer). We ask iOS to redraw at the
-// event — to roll over to the next prayer — or within ~15 min to nudge the
+// event, to roll over to the next prayer, or within roughly 15 min to nudge the
 // progress bar / pick up config changes, whichever comes first. iOS throttles
 // these requests, so everything except the countdown updates on its schedule.
 w.refreshAfterDate = new Date(Math.min(next.epoch + 2000, nowMs + 15 * 60e3));

@@ -11,7 +11,7 @@ later in the web app, not here.
 ## A1. Action Button (one-time, no build)
 
 Settings → **Action Button** → set it to the built-in **Voice Memo** function.
-This is native iOS — one press starts recording, one press stops, and it keeps
+This is native iOS. One press starts recording, one press stops, and it keeps
 running in the background through calls and screen lock. Do **not** use a
 shortcut's "Record Audio" action for this.
 
@@ -27,7 +27,7 @@ Then add these actions in order:
 1. **Receive** Audio and Media input from **Share Sheet**.
    (The shared Voice Memo arrives as *Shortcut Input*.)
 
-2. **Encode Media** — input: *Shortcut Input*.
+2. **Encode Media**, input: *Shortcut Input*.
    - Turn **Audio Only** ON.
    - Set a **lower audio quality**.
    - This keeps the file under Groq's 25 MB upload limit even for a ~50 min
@@ -39,7 +39,7 @@ Then add these actions in order:
    - Headers:
      - `Authorization` = `Bearer YOUR_GROQ_KEY`
    - Request Body: **Form**
-     - `file` (File) = the **Encoded Media** from step 2 — the field name must be exactly `file`
+     - `file` (File) = the **Encoded Media** from step 2. The field name must be exactly `file`
      - `model` (Text) = `whisper-large-v3-turbo`
      - `response_format` (Text) = `text`
      - `language` (Text) = `en` *(optional)*
@@ -58,7 +58,7 @@ Then add these actions in order:
      - `Content-Type` = `application/json`
      - `Prefer` = `return=minimal`
    - Request Body: **JSON**
-     - `user_id` = `YOUR_USER_UID` (your Supabase Auth user id — a fixed value)
+     - `user_id` = `YOUR_USER_UID` (your Supabase Auth user id, a fixed value)
      - `transcript_raw` = the **Transcript** variable
      - `recorded_at` = the **RecordedAt** variable
      - `source` = `shortcut`
@@ -77,10 +77,10 @@ Then add these actions in order:
 5. The transcript lands on your clipboard, a notification confirms it saved, and
    the session appears in the web app.
 
-If a transcription ever fails, the original `m4a` is still in Voice Memos — just
+If a transcription ever fails, the original `m4a` is still in Voice Memos, so just
 re-share it.
 
-## A3 note — file size
+## A3 note on file size
 
 Groq's free tier caps direct uploads at 25 MB. The Encode Media step keeps every
 session comfortably under that. For much longer or higher-quality recordings,
@@ -95,7 +95,7 @@ device. It must never appear in the web app or this repository.
 
 ---
 
-# Variant — "Log Therapy Session (Gemini)" — real speaker labeling
+# Variant: "Log Therapy Session (Gemini)", real speaker labeling
 
 Groq Whisper produces a flat transcript with no idea who is speaking. Gemini is
 multimodal, so it can **listen to the audio itself** and attribute each turn to
@@ -112,14 +112,14 @@ Get a **Google Gemini API key** from <https://aistudio.google.com/apikey>.
 
 1. **Receive** Audio and Media from **Share Sheet** (Shortcut Input).
 
-2. **Encode Media** — input *Shortcut Input*; **Audio Only** ON; **lowest**
+2. **Encode Media**, input *Shortcut Input*; **Audio Only** ON; **lowest**
    quality. (Critical here: Gemini takes inline audio only up to ~20 MB of
    request, and base64 inflates size ~33%, so keep it small.)
 
-3. **Base64 Encode** — input the **Encoded Media**; **Line Breaks: None**.
+3. **Base64 Encode**, input the **Encoded Media**; **Line Breaks: None**.
    Set variable **AudioB64** to the result.
 
-4. **Text** — paste this exactly, then replace the bracketed part with the
+4. **Text**, paste this exactly, then replace the bracketed part with the
    **AudioB64** variable (delete `PASTE_AudioB64_VARIABLE_HERE` and insert the
    variable in its place, keeping the surrounding quotes):
 
@@ -141,7 +141,7 @@ Get a **Google Gemini API key** from <https://aistudio.google.com/apikey>.
    - Method: **POST**
    - Headers: `Content-Type` = `application/json`
    - Request Body: **File**, and select the **Text** from step 4. (Choosing
-     "File" with a Text value sends the raw JSON as the body — easier than
+     "File" with a Text value sends the raw JSON as the body, which is easier than
      hand-building deeply nested JSON in the dictionary editor.)
 
 6. Parse Gemini's reply (it returns JSON `{ candidates: [ { content: { parts: [ { text } ] } } ] }`):
@@ -155,7 +155,7 @@ Get a **Google Gemini API key** from <https://aistudio.google.com/apikey>.
 
 7. **Current Date** → **Format Date** ISO 8601 → **Set Variable** **RecordedAt**.
 
-8. **Get Contents of URL** (save to Supabase) — same as the Groq shortcut's
+8. **Get Contents of URL** (save to Supabase), same as the Groq shortcut's
    step 5, but store the labeled text in **both** transcript columns so the app
    shows it labeled by default:
    - URL: `https://YOUR_PROJECT.supabase.co/rest/v1/sessions`
@@ -170,7 +170,7 @@ Get a **Google Gemini API key** from <https://aistudio.google.com/apikey>.
 
 9. **Copy to Clipboard** = **Transcript**.
 10. **Show Notification** = **Transcript** (while testing, set this to the raw
-    **Contents of URL** from step 5 instead — if Gemini errored, you'll see its
+    **Contents of URL** from step 5 instead. If Gemini errored, you'll see its
     error message here instead of an empty result).
 
 ### Notes / gotchas
@@ -181,7 +181,7 @@ Get a **Google Gemini API key** from <https://aistudio.google.com/apikey>.
 - **Length limit:** inline audio must fit the ~20 MB request cap. The low-quality
   encode keeps normal sessions under it; a very long session can exceed it, in
   which case Gemini returns a size error (visible via the step-10 testing tip).
-  The fix for that case is Gemini's File API (a multi-step upload) — ask if you
+  The fix for that case is Gemini's File API (a multi step upload). Ask if you
   want that version.
 - The app renders `transcript_labeled` as markdown and, when present, shows it by
-  default — so these sessions open already attributed to **You** / **Marty**.
+  default, so these sessions open already attributed to **You** / **Marty**.
