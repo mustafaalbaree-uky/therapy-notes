@@ -5,8 +5,8 @@ sessions over time.
 
 You press the iPhone Action Button to record a session as a native Voice Memo,
 share the memo to an iOS Shortcut that transcribes it (Groq Whisper) and saves
-the transcript to a database, and then read and reflect in this web app — which
-adds AI-generated titles, summaries, takeaways, next steps, and reflections.
+the transcript to a database, and then read and reflect in this web app, which
+adds AI generated titles, summaries, takeaways, next steps, and reflections.
 
 The data is therapy transcripts, so privacy is a first-class requirement.
 Transcripts stay private via database access control, not obscurity.
@@ -20,7 +20,7 @@ Transcripts stay private via database access control, not obscurity.
 | **iOS Action Button** | Native Voice Memo recording that survives calls & screen lock |
 | **"Log Therapy Session" shortcut** | Transcribes the shared memo (Groq Whisper) and writes the row to Supabase. Holds the `service_role` key, on-device only. |
 | **Supabase** | Postgres table `sessions` + Auth + Row Level Security |
-| **This web app** | Login, browse, read, and AI-enrich sessions. Read-and-enrich layer only — it never records audio. |
+| **This web app** | Login, browse, read, and AI-enrich sessions. Read and enrich layer only. It never records audio. |
 
 Audio never leaves the phone except to Groq for transcription. No audio is
 stored in the database; the original `m4a` stays in Voice Memos as your backup.
@@ -54,25 +54,25 @@ stored in the database; the original `m4a` stays in Voice Memos as your backup.
 3. Enable **Email** auth and create your single user account
    (Authentication → Users → Add user).
 4. Note these four values:
-   - Project URL — for the web app
-   - **anon** public key — for the web app
-   - **service_role** key — for the shortcut only
-   - your user's **UID** — for the shortcut's `user_id`
+   - Project URL, for the web app
+   - **anon** public key, for the web app
+   - **service_role** key, for the shortcut only
+   - your user's **UID**, for the shortcut's `user_id`
 
 ### 2. API keys
 
 - A **Groq** API key (for Whisper transcription in the shortcut).
 - At least one **enrichment** key, entered in the app's Settings:
-  - **Anthropic** (Claude) — highest quality
-  - **Groq** — free tier
-  - **Google Gemini** — also unlocks best-effort speaker labeling
+  - **Anthropic** (Claude): highest quality
+  - **Groq**: free tier
+  - **Google Gemini**: also unlocks best effort speaker labeling
 
 ### 3. The shortcut
 
 Build it by hand following [`docs/SHORTCUT.md`](docs/SHORTCUT.md), and set the
 Action Button to the native Voice Memo function. Record a short test memo, share
 it to the shortcut, and confirm a row appears in the web app. This is the golden
-loop — get it rock solid first.
+loop. Get it rock solid first.
 
 ### 4. The web app
 
@@ -101,7 +101,7 @@ Then open the printed URL. Build with `npm run build`, preview with
 A workflow at [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
 builds and deploys on every push to `main`. It calls `actions/configure-pages`
 with `enablement: true`, so it turns Pages on (source = GitHub Actions) by
-itself — no manual repo setting needed. The app publishes at
+itself, so no manual repo setting is needed. The app publishes at
 `https://<you>.github.io/therapy-notes/`.
 
 The Supabase URL + anon key for the provisioned `therapy-notes` project are
@@ -118,17 +118,17 @@ update `VITE_BASE`.
 
 ## Using the app
 
-- **Session list** — newest first, with title, date, and a one-line preview.
-- **Session detail** — full transcript with a Copy button. AI insights
+- **Session list**: newest first, with title, date, and a one-line preview.
+- **Session detail**: full transcript with a Copy button. AI insights
   (summary, takeaways, next steps, reflections) generate on demand and are
   **editable** and **regenerable**; results save back and mark the session
   `enriched` so they aren't recomputed every visit. Enrichment auto-runs the
   first time you open a not-yet-enriched session if a key is set.
-- **Add** — paste an older transcript with a date to backfill (`source = manual`),
+- **Add**: paste an older transcript with a date to backfill (`source = manual`),
   then enrich it the same way.
-- **Settings** — choose your enrichment provider and paste API keys.
-- **Speaker labeling** — with a Gemini key set, label the transcript into
-  **You** / **Marty** turns (best-effort, text-based; stored separately so the
+- **Settings**: choose your enrichment provider and paste API keys.
+- **Speaker labeling**: with a Gemini key set, label the transcript into
+  **You** / **Marty** turns (best effort, text based, stored separately so the
   raw transcript is never altered).
 
 ---
